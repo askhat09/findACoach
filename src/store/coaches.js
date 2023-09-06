@@ -30,16 +30,29 @@ export default {
 		}
 	},
 	actions: {
-		registerCoach(context, data) {
+		async registerCoach(context, data) {
+			const userId = context.rootGetters.userId
 			const formattedData = {
-				id: 'c3',
 				firstName: data.firstName,
 				lastName: data.lastName,
 				areas: data.areas,
 				description: data.description,
 				hourlyRate: data.rate,
 			}
-			context.commit('registerCoach', formattedData)
+
+			const response = await fetch(`https://find-coaches-8ac11-default-rtdb.firebaseio.com/coaches/${userId}.json`, {
+				method: 'PUT',
+				body: JSON.stringify(formattedData)
+			})
+
+			if (!response.ok) {
+				// error...
+			}
+
+			context.commit('registerCoach', {
+				...formattedData,
+				id: userId
+			})
 		}
 	},
 	getters: {
@@ -49,7 +62,7 @@ export default {
 		hasCoaches(state) {
 			return state.coaches && state.coaches.length > 0;
 		},
-		isCoach(state, getters, rootState, rootGetters) {
+		isCoach(_, getters, _2, rootGetters) {
 			const coaches = getters.coaches;
 			const userId = rootGetters.userId;
 			return coaches.some(coach => coach.id === userId);
