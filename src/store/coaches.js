@@ -71,6 +71,7 @@ export default {
 
 			for (let key in responseData) {
 				const formattedData = {
+					id: key,
 					firstName: responseData[key].firstName,
 					lastName: responseData[key].lastName,
 					areas: responseData[key].areas,

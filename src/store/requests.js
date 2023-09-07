@@ -11,13 +11,26 @@ export default {
 		}
 	},
 	actions: {
-		contactCoach(context, payload) {
+		async contactCoach(context, payload) {
 			const newContact = {
-				id: new Date().toISOString(),
-				coachId: payload.coachId,
 				userEmail: payload.email,
 				message: payload.message,
 			}
+
+			const res = await fetch(`https://find-coaches-8ac11-default-rtdb.firebaseio.com/request/${payload.coachId}.json`, {
+				method: 'POST',
+				body: JSON.stringify(newContact)
+			});
+
+			if (!res.ok) {
+				const error = new Error(res.message || "Failed to send!")
+				throw error
+			}
+
+			const responseData = await res.json();
+
+			newContact.id = responseData.name;
+			newContact.coachId = payload.coachId;
 
 			context.commit('addRequest', newContact)
 		}
