@@ -1,5 +1,10 @@
 <template>
-  <base-dialog :show="!!error" :title="'An error occured'" @close="handleError">{{ error }}</base-dialog>
+  <base-dialog
+    :show="!!error"
+    :title="'An error occured'"
+    @close="handleError"
+    >{{ error }}</base-dialog
+  >
   <coach-filter @change-filter="setFilters" />
   <section>
     <base-card>
@@ -85,12 +90,12 @@ export default {
       this.isLoading = false;
     },
     handleError() {
-      this.error = null
-    }
+      this.error = null;
+    },
   },
   created() {
-    this.loadCoaches()
-  }
+    this.loadCoaches();
+  },
 };
 </script>
 

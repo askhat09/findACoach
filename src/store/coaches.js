@@ -58,24 +58,24 @@ export default {
 			})
 		},
 
-		async fetchCoaches (context) {
+		async fetchCoaches(context) {
 			const response = await fetch('https://find-coaches-8ac11-default-rtdb.firebaseio.com/coaches.json');
 			const responseData = await response.json();
 
-			if(!response.ok) {
+			if (!response.ok) {
 				const error = new Error(responseData.message || 'Failed to fetch!');
 				throw error;
 			}
 
 			const coaches = []
 
-			for ( let key in responseData) {
+			for (let key in responseData) {
 				const formattedData = {
 					firstName: responseData[key].firstName,
 					lastName: responseData[key].lastName,
 					areas: responseData[key].areas,
 					description: responseData[key].description,
-					hourlyRate: responseData[key].hourlyRate					,
+					hourlyRate: responseData[key].hourlyRate,
 				}
 
 				coaches.push(formattedData)
