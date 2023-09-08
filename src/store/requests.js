@@ -8,6 +8,9 @@ export default {
 	mutations: {
 		addRequest(state, payload) {
 			state.requests.push(payload);
+		},
+		setRequests(state, payload) {
+			state.requests = payload
 		}
 	},
 	actions: {
@@ -33,6 +36,31 @@ export default {
 			newContact.coachId = payload.coachId;
 
 			context.commit('addRequest', newContact)
+		},
+		async fetchRequests(context) {
+			const coachId = context.rootGetters.userId;
+			const res = await fetch(`https://find-coaches-8ac11-default-rtdb.firebaseio.com/request/${coachId}.json`);
+
+			const resData = await res.json();
+
+			if (!res.ok) {
+				const error = new Error(resData.message)
+				throw error
+			}
+
+			const requests = []
+
+			for (let key in resData) {
+				const request = {
+					id: key,
+					coachId,
+					userEmail: resData[key].userEmail,
+					message: resData[key].message,
+				}
+				requests.push(request)
+			}
+
+			context.commit('setRequests', requests)
 		}
 	},
 	getters: {
