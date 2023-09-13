@@ -68,14 +68,16 @@ export default {
         return;
       }
       this.isLoading = true;
+
+      const authParams = {
+        email: this.email,
+        password: this.password,
+      };
       try {
         if (this.mode === 'login') {
-          //...
+          await this.$store.dispatch('login', authParams);
         } else {
-          await this.$store.dispatch('signup', {
-            email: this.email,
-            password: this.password,
-          });
+          await this.$store.dispatch('signup', authParams);
         }
       } catch (error) {
         this.error = error;
