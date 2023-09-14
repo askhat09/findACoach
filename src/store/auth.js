@@ -1,9 +1,9 @@
 export default {
 	state() {
 		return {
-			id: 'c3',
-			token: '',
-			tokenExpiration: '',
+			id: null,
+			token: null,
+			tokenExpiration: null,
 		}
 	},
 	mutations: {
@@ -62,6 +62,13 @@ export default {
 				userId: resData.localId,
 				token: res.idToken,
 				tokenExpiration: res.expiresIn
+			})
+		},
+		logout(context) {
+			context.commit('setUser', {
+				localId: null,
+				idToken: null,
+				expiresIn: null,
 			})
 		}
 	},
