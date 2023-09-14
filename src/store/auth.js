@@ -1,16 +1,20 @@
+let timer;
+
 export default {
 	state() {
 		return {
 			id: null,
 			token: null,
-			tokenExpiration: null,
+			didLogout: false,
 		}
 	},
 	mutations: {
 		setUser(state, payload) {
 			state.id = payload.userId,
-				state.token = payload.token,
-				state.tokenExpiration = payload.tokenExpiration
+			state.token = payload.token
+		},
+		setDidLogout(state) {
+			state.didLogout = true
 		}
 	},
 	actions: {
@@ -48,16 +52,34 @@ export default {
 				throw error
 			}
 
+			const expiresIn = +resData.expiresIn * 1000;
+			const expirationDate = new Date().getTime() + expiresIn;
+
 			localStorage.setItem('token', resData.idToken);
 			localStorage.setItem('userId', resData.localId);
+			localStorage.setItem('expirationDate', expirationDate)
+
+			timer = setTimeout(() => {
+				context.dispatch('autoLogout')
+			}, expiresIn);
 
 			context.commit('setUser', {
 				userId: resData.localId,
 				token: resData.idToken,
-				tokenExpiration: resData.expiresIn
 			})
 		},
 		tryLogin(context) {
+			const expirationDate = localStorage.getItem('expirationDate');
+			const expiresIn = +expirationDate - new Date().getTime();
+
+			if (expiresIn < 0) {
+				return
+			}
+
+			timer = setTimeout(() => {
+				context.dispatch('autoLogout')
+			}, expiresIn);
+
 			const token = localStorage.getItem('token');
 			const userId = localStorage.getItem('userId');
 
@@ -70,11 +92,19 @@ export default {
 			}
 		},
 		logout(context) {
+			localStorage.removeItem('token');
+			localStorage.removeItem('userId');
+
+			clearTimeout(timer)
+
 			context.commit('setUser', {
 				localId: null,
 				idToken: null,
-				expiresIn: null,
 			})
+		},
+		autoLogout(context) {
+			context.dispatch('logout');
+			context.commit('setDidLogout');
 		}
 	},
 	getters: {
@@ -86,6 +116,9 @@ export default {
 		},
 		isAuth(state) {
 			return !!state.token
+		},
+		didLogout(state) {
+			return state.didLogout
 		}
 	}
 }
