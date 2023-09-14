@@ -11,7 +11,7 @@
       <base-card>
         <div class="controls">
           <base-button @click="loadCoaches" mode="outline">Refresh</base-button>
-          <base-button v-if="!isLoading && !isCoach" link to="/register"
+          <base-button v-if="showRegisterBtn" link to="/register"
             >Register as Coash</base-button
           >
         </div>
@@ -77,6 +77,12 @@ export default {
     isCoach() {
       return this.$store.getters['coaches/isCoach'];
     },
+    isLogged() {
+      return this.$store.getters.isAuth
+    },
+    showRegisterBtn() {
+      return this.isLogged && !this.isLoading && !this.isCoach
+    }
   },
   methods: {
     setFilters(updatedFilters) {
