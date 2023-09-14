@@ -79,6 +79,8 @@ export default {
         } else {
           await this.$store.dispatch('signup', authParams);
         }
+
+        this.$router.replace('/coaches');
       } catch (error) {
         this.error = error;
       }
