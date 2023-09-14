@@ -1,7 +1,9 @@
 export default {
 	state() {
 		return {
-			id: 'c3'
+			id: 'c3',
+			token: '',
+			tokenExpiration: '',
 		}
 	},
 	mutations: {
@@ -33,8 +35,8 @@ export default {
 
 			context.commit('setUser', {
 				userId: resData.localId,
-				token: res.idToken,
-				tokenExpiration: res.expiresIn
+				token: resData.idToken,
+				tokenExpiration: resData.expiresIn
 			})
 		},
 		async signup(context, payload) {
@@ -66,6 +68,9 @@ export default {
 	getters: {
 		userId(state) {
 			return state.id
+		},
+		token(state) {
+			return state.token
 		}
 	}
 }
